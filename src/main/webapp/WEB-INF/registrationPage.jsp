@@ -5,7 +5,6 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0"/>
-    <meta name="_csrf" value="dummy" th:value="${_csrf.token}" />
     <link href="<c:url value="css/login.css"/>" rel="stylesheet">
     <link href="<c:url value="css/materialize.css"/>" rel="stylesheet">
     <link href="<c:url value="https://fonts.googleapis.com/icon?family=Material+Icons"/>" rel="stylesheet">

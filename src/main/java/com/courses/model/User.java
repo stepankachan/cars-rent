@@ -39,6 +39,7 @@ public class User {
 
     private String login;
 
+    @Column(name = "password", nullable = false)
     private String password;
 
     @Column(name = "creationDate", updatable = false)

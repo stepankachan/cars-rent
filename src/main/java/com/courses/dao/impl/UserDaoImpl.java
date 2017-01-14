@@ -14,15 +14,34 @@ import java.util.List;
 public class UserDaoImpl implements UserDao {
 
 
+    private SessionFactory sessionFactory;
+
     public void setSessionFactory(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
     }
 
-    private SessionFactory sessionFactory;
 
-
+    @SuppressWarnings("unchecked")
     public User findByUserName(String username) {
-        return null;
+        Session session = this.sessionFactory.openSession();
+        Transaction tx = session.beginTransaction();
+
+        List<User> users;
+
+        users = session
+                .createQuery("from  com.courses.model.User where login=?")
+                .setParameter(0, username)
+                .list();
+
+        tx.commit();
+        session.close();
+        if (users.size() > 0) {
+            return users.get(0);
+
+        } else {
+            return null;
+        }
+
     }
 
     public void save(User user) {

@@ -84,6 +84,7 @@ public class LoginController {
             user.setLogin(login);
             user.setRole(UserRole.ROLE_USER);
             user.setCreationDate(new Date());
+            user.setPassword(password);
             user.setLastOnlineDate(new Date());
             logger.error("1");
             model.addObject("msg", "Sent");

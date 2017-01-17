@@ -1,12 +1,12 @@
 package com.courses.dao.impl;
 
+import com.courses.dao.AbstractDao;
 import com.courses.dao.CarDao;
-import com.courses.model.AppUser;
 import com.courses.model.Car;
 
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
+import org.hibernate.Criteria;
+import org.hibernate.Hibernate;
+import org.hibernate.criterion.Order;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -15,45 +15,26 @@ import java.util.List;
  * @author Stepan.Kachan
  */
 @Repository("carDao")
-public class CarDaoImpl implements CarDao {
-
-    public void setSessionFactory(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
-    }
-
-    private SessionFactory sessionFactory;
-
-
-    public AppUser findByUserName(String username) {
-        return null;
-    }
-
-    public void save(AppUser user) {
-        Session session = this.sessionFactory.openSession();
-        Transaction tx = session.beginTransaction();
-        session.persist(user);
-        tx.commit();
-        session.close();
-    }
-
-
-    public Car findByUserName(Car car) {
-        return null;
-    }
-
-    public void save(Car car) {
-        Session session = this.sessionFactory.openSession();
-        Transaction tx = session.beginTransaction();
-        session.persist(car);
-        tx.commit();
-        session.close();
-    }
+public class CarDaoImpl extends AbstractDao<Integer, Car> implements CarDao {
 
     @SuppressWarnings("unchecked")
     public List<Car> list() {
-        Session session = this.sessionFactory.openSession();
-        List<Car> carList = session.createQuery("from com.courses.model.Car").list();
-        session.close();
-        return carList;
+        Criteria criteria = createEntityCriteria().addOrder(Order.asc("id"));
+        criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);//To avoid duplicates.
+        return (List<Car>) criteria.list();
+    }
+
+    @Override
+    public void save(Car car) {
+        persist(car);
+    }
+
+    @Override
+    public Car findById(int id) {
+        Car car = getByKey(Math.toIntExact(id));
+        if(car!=null){
+            Hibernate.initialize(car.getRentRequests());
+        }
+        return car;
     }
 }

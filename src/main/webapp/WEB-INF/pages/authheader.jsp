@@ -2,10 +2,9 @@
 <nav class="teal darken-3">
     <div class="nav-wrapper">
         <ul class="left">
-            <li><a href="<c:url value='/list' />"><i class="material-icons left">supervisor_account</i>Пользователи</a>
-            </li>
+            <li><a href="<c:url value='/list' />"><i class="material-icons left">supervisor_account</i>Пользователи</a></li>
             <li><a href="<c:url value='/cars' />"><i class="material-icons left">pageview</i>Автомобили</a></li>
-            <li><a href="<c:url value='/' />"><i class="material-icons left">assignment</i>Заявки</a></li>
+            <li><a href="<c:url value='/requests' />"><i class="material-icons left">assignment</i>Заявки</a></li>
         </ul>
         <ul class="right hide-on-med-and-down">
 

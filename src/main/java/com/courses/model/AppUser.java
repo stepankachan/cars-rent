@@ -31,57 +31,40 @@ public class AppUser implements Serializable {
 
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
-     
-     
     private Integer id;
 
     @NotEmpty
     @Column(name="SSO_ID", unique=true, nullable=false)
-     
-     
     private String ssoId;
 
     @NotEmpty
     @Column(name="PASSWORD", nullable=false)
-     
-     
     private String password;
 
     @NotEmpty
     @Column(name="FIRST_NAME", nullable=false)
-     
-     
     private String firstName;
 
     @NotEmpty
     @Column(name="LAST_NAME", nullable=false)
-     
-     
     private String lastName;
 
     @NotEmpty
     @Column(name="EMAIL", nullable=false)
-     
-     
     private String email;
-
-  
 
     @NotEmpty
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "APP_USER_USER_PROFILE",
             joinColumns = { @JoinColumn(name = "USER_ID") },
             inverseJoinColumns = { @JoinColumn(name = "USER_PROFILE_ID") })
-
     private Set<UserRole> userRoles;
-    
+
     public Set<UserRole> getUserRoles() {
         return userRoles;
     }
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-     
-     
     private Set<RentRequest> userRentRequests;
 
 

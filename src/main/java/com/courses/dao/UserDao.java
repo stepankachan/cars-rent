@@ -1,6 +1,6 @@
 package com.courses.dao;
 
-import com.courses.model.User;
+import com.courses.model.AppUser;
 
 import java.util.List;
 
@@ -9,9 +9,13 @@ import java.util.List;
  */
 public interface UserDao {
 
-    User findByUserName(String username);
+    AppUser findById(int id);
 
-    void save(User user);
+    AppUser findBySSO(String sso);
 
-    List<User> list();
+    void save(AppUser user);
+
+    void deleteBySSO(String sso);
+
+    List<AppUser> findAllUsers();
 }

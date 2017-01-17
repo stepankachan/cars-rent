@@ -13,17 +13,14 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
 		<!-- Spring -->
-		<spring-framework.version>4.0.3.RELEASE</spring-framework.version>
-		<spring.security.version>4.0.2.RELEASE</spring.security.version>
+		<spring-framework.version>4.2.5.RELEASE</spring-framework.version>
+		<spring.security.version>4.0.4.RELEASE</spring.security.version>
 		<servlet.api.version>3.1.0</servlet.api.version>
 		<jsp.api.version>2.2</jsp.api.version>
 		<jstl.version>1.2</jstl.version>
 		<!-- Hibernate / JPA -->
 		<!-- <hibernate.version>4.3.5.Final</hibernate.version> -->
 		<hibernate.version>5.2.5.Final</hibernate.version>
-
-		<!-- Logging -->
-		<logback.version>1.0.13</logback.version>
 		<slf4j.version>1.7.5</slf4j.version>
 	</properties>
 
@@ -34,7 +31,7 @@
 				<directory>src/main/webapp/</directory>
 			</resource>
 			<resource>
-				<directory>src/main/webapp/WEB-INF/</directory>
+				<directory>src/main/resources/</directory>
 			</resource>
 		</resources>
 		<plugins>
@@ -83,12 +80,6 @@
 			<artifactId>slf4j-api</artifactId>
 			<version>${slf4j.version}</version>
 			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>ch.qos.logback</groupId>
-			<artifactId>logback-classic</artifactId>
-			<version>${logback.version}</version>
-			<scope>runtime</scope>
 		</dependency>
 
 		<!-- Hibernate -->
@@ -142,6 +133,12 @@
 			<version>${spring.security.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-taglibs</artifactId>
+			<version>${spring.security.version}</version>
+		</dependency>
+
+		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
 			<version>${servlet.api.version}</version>
@@ -157,10 +154,16 @@
 			<version>${jstl.version}</version>
 		</dependency>
 
+		<!-- SLF4J/Logback -->
 		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
-			<version>1.2.17</version>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>1.1.7</version>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-validator</artifactId>
+			<version>5.3.3.Final</version>
 		</dependency>
 
 	</dependencies>

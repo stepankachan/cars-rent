@@ -1,17 +1,20 @@
 package com.courses.dao.impl;
 
 import com.courses.dao.CarDao;
+import com.courses.model.AppUser;
 import com.courses.model.Car;
-import com.courses.model.User;
+
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 /**
  * @author Stepan.Kachan
  */
+@Repository("carDao")
 public class CarDaoImpl implements CarDao {
 
     public void setSessionFactory(SessionFactory sessionFactory) {
@@ -21,11 +24,11 @@ public class CarDaoImpl implements CarDao {
     private SessionFactory sessionFactory;
 
 
-    public User findByUserName(String username) {
+    public AppUser findByUserName(String username) {
         return null;
     }
 
-    public void save(User user) {
+    public void save(AppUser user) {
         Session session = this.sessionFactory.openSession();
         Transaction tx = session.beginTransaction();
         session.persist(user);

@@ -10,4 +10,10 @@ import java.util.List;
 public interface CarService {
 
     List<Car> findAllCars();
+
+    void saveCar(Car car);
+
+    void updateCar(Car car);
+
+    Car findById(int id);
 }

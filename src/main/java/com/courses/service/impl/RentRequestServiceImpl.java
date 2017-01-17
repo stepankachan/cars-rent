@@ -30,4 +30,9 @@ public class RentRequestServiceImpl implements RentRequestService{
     public List<RentRequest> getUserRequests(AppUser user) {
         return dao.getUsersRequests(user);
     }
+
+    @Override
+    public List<RentRequest> getAllRequests() {
+        return dao.getAllRequests();
+    }
 }

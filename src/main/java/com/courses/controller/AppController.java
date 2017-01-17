@@ -1,8 +1,10 @@
 package com.courses.controller;
 
 import com.courses.model.AppUser;
+import com.courses.model.Car;
 import com.courses.model.RentRequest;
 import com.courses.model.UserRole;
+import com.courses.service.CarService;
 import com.courses.service.RentRequestService;
 import com.courses.service.UserProfileService;
 import com.courses.service.UserService;
@@ -27,8 +29,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 @Controller
 @RequestMapping("/")
@@ -37,6 +42,9 @@ public class AppController {
 
 	@Autowired
 	UserService userService;
+
+	@Autowired
+	CarService carService;
 	
 	@Autowired
 	UserProfileService userProfileService;
@@ -73,11 +81,33 @@ public class AppController {
 
 	@RequestMapping(value = "cars", method = RequestMethod.GET)
     public String listCars(ModelMap model){
-        List<AppUser> users = userService.findAllUsers();
-        model.addAttribute("users", users);
-        model.addAttribute("loggedinuser", getPrincipal());
+        List<Car> cars = carService.findAllCars();
+        model.addAttribute("cars", cars);
+
         return "pages/carsPage";
     }
+/*1	/static/images/cars/3Honda_Civic-270.jpg	Honda Civic	2017-01-14 21:50:28
+2	/static/images/cars/AUDI-A6.jpg	Audi A6	2017-01-14 21:50:56
+3	/static/images/cars/Lanos-270.jpg	Lanos	2017-01-14 23:44:24
+4	/static/images/cars/Mazda_3_sedan_2011-270.jpg	Mazda	2017-01-17 17:15:07
+5	/static/images/cars/range-270x1.jpg	Range Rover	2017-01-17 17:15:10
+*/
+	@RequestMapping(value = "requests", method = RequestMethod.GET)
+	public String getRequests(ModelMap model){
+		List<RentRequest> requests = requestService.getAllRequests();
+		Car car = carService.findAllCars().iterator().next();
+		RentRequest request = requestService.getAllRequests().iterator().next();
+		Set<RentRequest> requestset = new HashSet<>();
+		requestset.add(request);
+		car.setRentRequests(requestset);
+
+		car.setRentRequests(requestset);
+
+		carService.updateCar(car);
+		model.addAttribute("requests", requests);
+
+		return "pages/rentRequestsPage";
+	}
 
 	/**
 	 * This method will provide the medium to add a new user.

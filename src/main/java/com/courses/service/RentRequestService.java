@@ -13,4 +13,6 @@ public interface RentRequestService {
     void addRequest(RentRequest rentRequest);
 
     List<RentRequest> getUserRequests(AppUser user);
+
+    List<RentRequest> getAllRequests();
 }

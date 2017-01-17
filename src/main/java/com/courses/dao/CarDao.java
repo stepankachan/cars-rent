@@ -9,9 +9,9 @@ import java.util.List;
  */
 public interface CarDao {
 
-    Car findByUserName(Car car);
+    List<Car> list();
 
     void save(Car car);
 
-    List<Car> list();
+    Car findById(int id);
 }

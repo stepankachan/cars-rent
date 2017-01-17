@@ -13,4 +13,6 @@ public interface RentRequestDao {
     void addRequest(RentRequest rentRequest);
 
     List<RentRequest> getUsersRequests(AppUser user);
+
+    List<RentRequest> getAllRequests();
 }

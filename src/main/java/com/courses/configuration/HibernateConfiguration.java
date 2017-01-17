@@ -54,6 +54,8 @@ public class HibernateConfiguration {
         properties.put("hibernate.hbm2ddl.auto", environment.getRequiredProperty("hibernate.hbm2ddl.auto"));
         properties.put("current_session_context_class", environment.getRequiredProperty("current_session_context_class"));
         properties.put("hibernate.enable_lazy_load_no_trans", environment.getRequiredProperty("hibernate.enable_lazy_load_no_trans"));
+        properties.put("hibernate.connection.charSet", environment.getRequiredProperty("hibernate.connection.charSet"));
+        properties.put("connection.characterEncoding", environment.getRequiredProperty("connection.characterEncoding"));
         return properties;
     }
 

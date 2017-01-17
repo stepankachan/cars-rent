@@ -6,6 +6,7 @@ import com.courses.model.AppUser;
 import com.courses.model.RentRequest;
 import com.courses.model.UserRole;
 import org.hibernate.Criteria;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
@@ -29,5 +30,13 @@ public class RentRequestDaoImpl extends AbstractDao<Integer, RentRequest> implem
         Criteria crit = createEntityCriteria();
         crit.add(Restrictions.eq("user", user));
         return (List<RentRequest>) crit.list();
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<RentRequest> getAllRequests() {
+        Criteria criteria = createEntityCriteria();
+        criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);//To avoid duplicates.
+        return (List<RentRequest>) criteria.list();
     }
 }

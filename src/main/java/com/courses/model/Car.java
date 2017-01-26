@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Set;
 
@@ -35,11 +36,27 @@ public class Car {
     @Column(name = "url")
     private String imageURL;
 
+    private BigDecimal price;
+
+    @Column(name = "engine_capacity")
+    private BigDecimal engineCapacity;
+
+    private String fuel;
+
+    private String transmission;
+
+    @Column(name = "passenger_count")
+    private Integer passengerCount;
+
+    private Boolean free;
+
     @Temporal(TemporalType.TIMESTAMP)
     private Date releaseDate;
 
     @OneToMany(mappedBy = "car", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private Set<RentRequest> rentRequests;
+
+
 
 
 }

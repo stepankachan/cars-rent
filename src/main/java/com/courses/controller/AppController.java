@@ -87,7 +87,7 @@ public class AppController {
         return "pages/carsPage";
     }
 /*1	/static/images/cars/3Honda_Civic-270.jpg	Honda Civic	2017-01-14 21:50:28
-2	/static/images/cars/AUDI-A6.jpg	Audi A6	2017-01-14 21:50:56
+2	/static/images/cars/audi-a6.jpg	Audi A6	2017-01-14 21:50:56
 3	/static/images/cars/Lanos-270.jpg	Lanos	2017-01-14 23:44:24
 4	/static/images/cars/Mazda_3_sedan_2011-270.jpg	Mazda	2017-01-17 17:15:07
 5	/static/images/cars/range-270x1.jpg	Range Rover	2017-01-17 17:15:10

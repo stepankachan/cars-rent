@@ -16,34 +16,37 @@
 <body>
 
 <%@include file="authheader.jsp" %>
-<div class="col s12">
+<div class="row">
     <div class="section">
         <h4 class="teal-text center-align" style="font-weight: bolder">Автомобили</h4>
     </div>
-    <div class="col s12 col-border no-top-border">
+
         <c:forEach items="${cars}" var="car">
 
-            <div class="col s12 m8 offset-m2 l6 offset-l3">
-                <div class="card-panel grey lighten-5 z-depth-1">
-                    <div class="row valign-wrapper">
-                        <div class="col s2">
-                            <img src="${car.imageURL}" alt="" class="circle responsive-img">
-                            <!-- notice the "circle" class -->
-                        </div>
-                        <div class="col s10">
-              <span class="black-text">
-                      ${car.name}
-              </span>
-                        </div>
+            <div class="col s6 m6">
+                <div class="card">
+                    <div class="card-image">
+                        <img src="${car.imageURL}">
+                        <span class="card-title white-text text-darken-3">${car.name}</span>
+                        <a class="waves-effect waves-light btn right" style="margin-top: 5px"><i class="material-icons left">search</i>Забронировать</a>
+                    </div>
+                    <div class="card-content">
+                        <h6>Цена (сутки) : ${car.price}$</h6>
+                        <h6>Количество пасажиров : ${car.passengerCount}</h6>
+                        <h6>Дата выпуска : ${car.releaseDate}</h6>
+                        <h6>Трансмиссия : ${car.transmission}</h6>
+                        <h6>Топливо : ${car.fuel}</h6>
+                        <h6>Обьем двигателя : ${car.engineCapacity}</h6>
                     </div>
                 </div>
             </div>
 
-        </c:forEach>
-    </div>
 
-    <script src="/static/js/jquery-3.1.1.min.js"></script>
-    <script src="/static/js/materialize.js"></script>
-    <script src="/static/js/init.js"></script>
+    </c:forEach>
+</div>
+
+<script src="/static/js/jquery-3.1.1.min.js"></script>
+<script src="/static/js/materialize.js"></script>
+<script src="/static/js/init.js"></script>
 </body>
 </html>

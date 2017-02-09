@@ -7,13 +7,12 @@
 
 <head>
 	<title>User Registration Form</title>
-	<link href="<c:url value='/static/css/bootstrap.css' />" rel="stylesheet"></link>
-	<link href="<c:url value='/static/css/app.css' />" rel="stylesheet"></link>
+    <%@include file="util/styles.jsp" %>
 </head>
 
 <body>
  	<div class="generic-container">
-		<%@include file="authheader.jsp" %>
+		<%@include file="widgets/authheader.jsp" %>
 
 		<div class="well lead">User Registration Form</div>
 	 	<form:form method="POST" modelAttribute="user" class="form-horizontal">
@@ -112,5 +111,6 @@
 			</div>
 		</form:form>
 	</div>
+<%@include file="util/scripts.jsp" %>
 </body>
 </html>

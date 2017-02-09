@@ -15,4 +15,8 @@ public interface RentRequestService {
     List<RentRequest> getUserRequests(AppUser user);
 
     List<RentRequest> getAllRequests();
+
+    RentRequest findRequestById(String id);
+
+    void updateRequest(RentRequest rentRequest);
 }

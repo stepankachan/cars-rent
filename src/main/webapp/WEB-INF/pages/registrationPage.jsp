@@ -7,15 +7,13 @@
 
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0"/>
-    <link href="<c:url value="/static/css/login.css"/>" rel="stylesheet">
-    <link href="<c:url value="/static/css/materialize.css"/>" rel="stylesheet">
-    <link href="<c:url value="https://fonts.googleapis.com/icon?family=Material+Icons"/>" rel="stylesheet">
     <title>Регистрация</title>
+    <%@include file="util/styles.jsp" %>
 </head>
 <body>
 
 <div class="row" style="margin-bottom: 0 !important;">
-    <%@include file="authheader.jsp" %>
+    <%@include file="widgets/authheader.jsp" %>
     <div class="col s9">
         <img src="static/images/RegistrationBackground.jpg" width="100%" height="100%">
     </div>
@@ -109,10 +107,6 @@
     </div>
 
 </div>
-
-<script src="static/js/jquery-3.1.1.min.js"></script>
-<script src="static/js/materialize.js"></script>
-<script src="static/js/init.js"></script>
-
+<%@include file="util/scripts.jsp" %>
 </body>
 </html>

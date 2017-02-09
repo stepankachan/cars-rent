@@ -6,12 +6,11 @@
 <html>
 <head>
 	<title>Registration Confirmation Page</title>
-	<link href="<c:url value='/static/css/bootstrap.css' />" rel="stylesheet"></link>
-	<link href="<c:url value='/static/css/app.css' />" rel="stylesheet"></link>
+    <%@include file="util/styles.jsp" %>
 </head>
 <body>
 	<div class="generic-container">
-		<%@include file="authheader.jsp" %>
+		<%@include file="widgets/authheader.jsp" %>
 		
 		<div class="alert alert-success lead">
 	    	${success}
@@ -21,6 +20,7 @@
 			Go to <a href="<c:url value='/list' />">Login to application</a>
 		</span>
 	</div>
+    <%@include file="util/scripts.jsp" %>
 </body>
 
 </html>

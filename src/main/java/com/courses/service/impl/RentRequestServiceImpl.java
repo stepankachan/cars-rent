@@ -35,4 +35,14 @@ public class RentRequestServiceImpl implements RentRequestService{
     public List<RentRequest> getAllRequests() {
         return dao.getAllRequests();
     }
+
+    @Override
+    public RentRequest findRequestById(String id) {
+        return dao.findRequestById(id);
+    }
+
+    @Override
+    public void updateRequest(RentRequest rentRequest) {
+        dao.updateRentRequest(rentRequest);
+    }
 }

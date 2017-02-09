@@ -39,4 +39,14 @@ public class RentRequestDaoImpl extends AbstractDao<Integer, RentRequest> implem
         criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);//To avoid duplicates.
         return (List<RentRequest>) criteria.list();
     }
+
+    @Override
+    public RentRequest findRequestById(String id) {
+        return getByKey(Integer.valueOf(id));
+    }
+
+    @Override
+    public void updateRentRequest(RentRequest rentRequest) {
+        update(rentRequest);
+    }
 }

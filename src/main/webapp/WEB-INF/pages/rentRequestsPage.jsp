@@ -8,61 +8,69 @@
     <title>Заявки</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0"/>
-    <link href="<c:url value="/static/css/login.css"/>" rel="stylesheet">
-    <link href="<c:url value="/static/css/materialize.css"/>" rel="stylesheet">
-    <link href="<c:url value="https://fonts.googleapis.com/icon?family=Material+Icons"/>" rel="stylesheet">
+    <%@include file="util/styles.jsp" %>
 </head>
 <body>
 
 <div class="row">
 
-    <%@include file="authheader.jsp" %>
+    <%@include file="widgets/authheader.jsp" %>
     <div class="col s12 no-padding">
-        <div class="col s8 no-padding">
-            <div class="col s12 col-border">
-                <h5 class="black-text left-align bolder">Заявки пользователей</h5>
-            </div>
-            <div class="col s12 col-border no-top-border">
-                <table class="table highlight">
-                    <thead>
+
+        <div class="col s12">
+            <h4 class="blue-grey-text center-align bolder">Заявки пользователей</h4>
+        </div>
+        <div class="col s12">
+            <table class="table highlight tablesorter" id="requests-table">
+                <thead>
+                <tr>
+                    <th class="align-center">Пользователь</th>
+                    <th class="align-center">Автомобиль</th>
+                    <th class="align-center">Начало аренды</th>
+                    <th class="align-center">Конец аренды</th>
+                    <th class="align-center">Подтверждено</th>
+                    <th class="no-sorting"></th>
+                </tr>
+                </thead>
+                <tbody>
+                <c:forEach items="${requests}" var="request">
                     <tr>
-                        <th></th>
-                        <th>Имя</th>
-                        <th>Фамилия</th>
-                        <th>Почта</th>
-                        <th>Логин</th>
-                        <th>Роль</th>
+                        <td class="align-center">${request.user.ssoId}</td>
+                        <td class="align-center">${request.car.name}</td>
+                        <td class="align-center">${request.fromDate}</td>
+                        <td class="align-center">${request.toDate}</td>
+                        <td class="align-center">
+                            <c:if test="${request.confirmed.equals(true)}">
+                                <i class="material-icons ">done</i>
+                            </c:if>
+                            <c:if test="${request.confirmed.equals(false)}">
+                                <i class="material-icons ">remove</i>
+                            </c:if>
+                        </td>
+                        <td style="width: 2%">
+                            <a class="waves-effect waves-teal btn-flat btn-block" style="margin-top: 5px" href="#${request.id}">
+                                <i class="large material-icons">search</i>
+                            </a>
+                        </td>
                     </tr>
-                    </thead>
-                    <tbody>
-                    <c:forEach items="${users}" var="user">
-                        <tr>
-                            <td>
-                                <form id="infoForm">
-                                    <input onchange="getUserDetails('${user.ssoId}')" type="checkbox"
-                                           <c:if test="${selecteduser.ssoId.equals(user.ssoId)}">checked</c:if>
-                                           id="${user.ssoId}" name="${user.ssoId}" value="${user.ssoId}"
-                                           class="filled-in"/>
-                                    <label for="${user.ssoId}"></label>
-                                </form>
-                            </td>
-                            <td>${user.firstName}</td>
-                            <td>${user.lastName}</td>
-                            <td>${user.email}</td>
-                            <td>${user.ssoId}</td>
-                            <td>
-                                <c:if test="${user.admin.equals(true)}">Пользователь</c:if>
-                                <c:if test="${user.admin.equals(false)}">Администратор</c:if>
-                            </td>
-                        </tr>
-                    </c:forEach>
-                    </tbody>
-                </table>
-            </div>
+                    <form:form method="GET" class="form-horizontal" action="/approve-request-${request.id}">
+                        <div id="${request.id}" class="modal" style="max-height: 100%">
+                            <div class="modal-content">
+                                <div class="row">
+                                    <h4>${request.user.ssoId}</h4>
+                                    <%@include file="widgets/calendar.jsp" %>
+                                    <input value="Подтвердить" type="submit" class="modal-action modal-close waves-effect waves-teal btn-flat right">
+                                </div>
+                            </div>
+                        </div>
+                    </form:form>
+                </c:forEach>
+                </tbody>
+            </table>
         </div>
-        </div>
+
     </div>
 </div>
-
+<%@include file="util/scripts.jsp" %>
 </body>
 </html>

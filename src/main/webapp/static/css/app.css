@@ -1,0 +1,76 @@
+
+.copyright {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    top: 93%;
+    width: 25%;
+}
+
+.col-border {
+    border: 2px solid #bdbdbd;
+}
+
+.no-top-border {
+    border-top: none !important;
+}
+
+.bolder {
+    font-weight: bolder;
+}
+
+.toolbar-icon {
+    font-size: 3em !important;
+    margin-bottom: -45px;
+    line-height: 50px !important;
+}
+
+.align-center{
+    text-align:center;
+    vertical-align:middle;
+}
+
+.full-width{
+    width: 100%;
+}
+
+/* tables */
+table.tablesorter {
+    margin: 10px 0pt 15px;
+    width: 100%;
+    text-align: left;
+}
+
+
+table.tablesorter thead tr .header {
+    background-image: url(/static/images/table/bg.gif);
+    background-repeat: no-repeat;
+    background-position: center right;
+    cursor: pointer;
+}
+
+table.tablesorter tbody td {
+    color: #3D3D3D;
+    background-color: #FFF;
+    vertical-align: top;
+}
+
+table.tablesorter tbody tr.odd td {
+    background-color: #F0F0F6;
+}
+
+table.tablesorter thead tr .headerSortUp {
+    background-image: url(/static/images/table/asc.gif);
+}
+
+table.tablesorter thead tr .headerSortDown {
+    background-image: url(/static/images/table/desc.gif);
+}
+
+table.tablesorter thead tr .headerSortDown, table.tablesorter thead tr .headerSortUp {
+    background-color: #eceff1;
+}
+
+.no-sorting{
+    background-image: none !important;
+}

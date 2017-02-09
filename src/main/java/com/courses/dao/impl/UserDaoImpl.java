@@ -53,18 +53,10 @@ public class UserDaoImpl extends AbstractDao<Integer, AppUser> implements UserDa
             user.setAdmin(user.getUserRoles().stream().anyMatch(userRole ->
                     userRole.getType().equalsIgnoreCase(UserRoleType.ADMIN.getUserRoleType())));
         });
-
-        // No need to fetch userProfiles since we are not showing them on list page. Let them lazy load.
-        // Uncomment below lines for eagerly fetching of userProfiles if you want.
-		/*
-		for(User user : users){
-			Hibernate.initialize(user.getUserRoles());
-		}*/
         return users;
     }
 
     public void save(AppUser user) {
-        logger.error("!!!!!!!!!!!!!!!!!!! save !!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         persist(user);
     }
 

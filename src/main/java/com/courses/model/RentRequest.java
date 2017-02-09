@@ -31,6 +31,8 @@ public class RentRequest implements Serializable{
     @Column(nullable = false)
     private String description;
 
+    private boolean confirmed;
+
     @Column(name = "from_date")
     @Temporal(TemporalType.DATE)
     private Date fromDate;

@@ -15,4 +15,8 @@ public interface RentRequestDao {
     List<RentRequest> getUsersRequests(AppUser user);
 
     List<RentRequest> getAllRequests();
+
+    RentRequest findRequestById(String id);
+
+    void updateRentRequest(RentRequest rentRequest);
 }

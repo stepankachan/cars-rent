@@ -8,50 +8,19 @@
     <title>Aренда машин</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0"/>
-    <link href="<c:url value="/static/css/login.css"/>" rel="stylesheet">
-    <link href="<c:url value="/static/css/materialize.css"/>" rel="stylesheet">
-    <link href="<c:url value="https://fonts.googleapis.com/icon?family=Material+Icons"/>" rel="stylesheet">
+    <%@include file="util/styles.jsp" %>
 </head>
 
 <body>
 
 <div class="row">
-    <%@include file="authheader.jsp" %>
+    <%@include file="widgets/authheader.jsp" %>
     <div class="col s12 no-padding">
         <div class="col s8 no-padding">
-            <div class="col s12 col-border">
-                <h5 class="black-text left-align bolder">Список пользователей</h5>
+            <div class="col s12 ">
+                <h4 class="blue-grey-text center-align bolder">Список пользователей</h4>
             </div>
-            <div class="col s12 col-border no-top-border no-padding">
-                <nav class="grey lighten-1">
-                    <div class="nav-wrapper">
-                        <ul class="left hide-on-med-and-down">
-                            <sec:authorize access="hasRole('ADMIN')">
-                                <li>
-                                    <a style="height: 100%" href="<c:url value='/newuser' />">
-                                        <i class="toolbar-icon material-icons">person_add</i>
-                                        <span class="inner">Создать</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a style="height: 100%" href="<c:url value='/edit-user-${selecteduser.ssoId}' />">
-                                        <i class="toolbar-icon material-icons">mode_edit</i>
-                                        <span class="inner">Редактировать</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a style="height: 100%" href="<c:url value='/delete-user-${selecteduser.ssoId}' />">
-                                        <i class="toolbar-icon material-icons">delete</i>
-                                        <span class="inner">Удалить</span>
-                                    </a>
-                                </li>
-                            </sec:authorize>
-                        </ul>
-                    </div>
-                </nav>
-            </div>
-
-            <div class="col s12 col-border no-top-border">
+            <div class="col s12">
                 <table class="table highlight">
                     <thead>
                     <tr>
@@ -85,15 +54,52 @@
                             </td>
                         </tr>
                     </c:forEach>
+                    <sec:authorize access="hasRole('ADMIN')">
+                        <tr style="background-color: transparent">
+                            <td colspan="6" class="row">
+                                <div class="col s12 m6 l3">
+                                    <a class="waves-effect waves-light btn full-width blue-grey"
+                                       href="<c:url value='/newuser'/>">
+                                        <i class="material-icons left">person_add</i>
+                                        Создать
+                                    </a>
+                                </div>
+                                <div class="col s12 m6 l3">
+                                    <a class="waves-effect waves-light btn full-width blue-grey"
+                                       href="<c:url value='/edit-user-${selecteduser.ssoId}' />">
+                                        <i class="material-icons left">mode_edit</i>
+                                        Изменить
+                                    </a>
+                                </div>
+                                <div class="col s12 m6 l3">
+                                    <a class="waves-effect waves-light btn full-width blue-grey"
+                                       href="<c:url value='/delete-user-${selecteduser.ssoId}'/>">
+                                        <i class="material-icons left">delete</i>
+                                        Удалить
+                                    </a>
+                                </div>
+                                <div class="col s12 m6 l3">
+                                    <a class="waves-effect waves-light btn full-width blue-grey"
+                                       href="<c:url value='/edit-user-${selecteduser.ssoId}'/>">
+                                        <i class="material-icons left">delete</i>
+                                        Заявки
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    </sec:authorize>
                     </tbody>
                 </table>
             </div>
         </div>
         <div class="col s4">
             <div class="col s12">
-                <h5 class="black-text left-align bolder" style="font-weight: bolder">Информация</h5>
+                <h4 class="blue-grey-text center-align bolder">Заявки</h4>
             </div>
             <div class="col s12">
+                <blockquote>
+                    This is an example quotation that uses the blockquote tag.
+                </blockquote>
                 <table class="table highlight">
                     <thead>
                     <tr>
@@ -113,10 +119,6 @@
             </div>
         </div>
     </div>
-</div>
-
-<script src="/static/js/jquery-3.1.1.min.js"></script>
-<script src="/static/js/materialize.js"></script>
-<script src="/static/js/init.js"></script>
+    <%@include file="util/scripts.jsp" %>
 </body>
 </html>

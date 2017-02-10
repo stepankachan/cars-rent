@@ -6276,7 +6276,7 @@ form p:last-child {
 }
 
 [type="checkbox"] {
-  /* checkbox aspect */
+  /* checkbox interceptor */
 }
 
 [type="checkbox"] + label {

@@ -1,19 +1,20 @@
 package com.courses.configuration;
 
+import com.courses.interceptor.LoggerInterceptor;
 import com.courses.converter.RoleToUserProfileConverter;
-import com.courses.security.SecurityConfig;
+import com.courses.service.LogActivityService;
+import com.courses.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistration;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
@@ -28,7 +29,7 @@ import org.springframework.web.servlet.view.JstlView;
 public class AppConfig extends WebMvcConfigurerAdapter {
 
     @Autowired
-    RoleToUserProfileConverter roleToUserProfileConverter;
+    private RoleToUserProfileConverter roleToUserProfileConverter;
 
     @Bean
     public InternalResourceViewResolver viewResolver() {
@@ -37,6 +38,17 @@ public class AppConfig extends WebMvcConfigurerAdapter {
         viewResolver.setPrefix("/WEB-INF/");
         viewResolver.setSuffix(".jsp");
         return viewResolver;
+    }
+
+    @Autowired
+    private LogActivityService logActivityService;
+
+    @Autowired
+    private UserService userService;
+
+    @Bean
+    LoggerInterceptor localInterceptor() {
+        return new LoggerInterceptor(logActivityService,userService);
     }
 
     @Bean
@@ -70,4 +82,8 @@ public class AppConfig extends WebMvcConfigurerAdapter {
         matcher.setUseRegisteredSuffixPatternMatch(true);
     }
 
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(new LoggerInterceptor(logActivityService,userService));
+    }
 }

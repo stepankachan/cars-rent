@@ -1,9 +1,10 @@
 package com.courses.model;
 
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.NotEmpty;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -19,9 +20,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import java.io.Serializable;
-import java.util.HashSet;
 import java.util.Set;
-import java.util.function.Predicate;
 
 @Entity
 @Getter
@@ -68,6 +67,8 @@ public class AppUser implements Serializable {
     private Set<RentRequest> userRentRequests;
 
 
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Set<LogActivity> userActivities;
     /*
      * DO-NOT-INCLUDE passwords in toString function.
      * It is done here just for convenience purpose.

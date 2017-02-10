@@ -2,6 +2,7 @@
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
 <html>
 <head>
@@ -53,14 +54,15 @@
                             </a>
                         </td>
                     </tr>
-                    <form:form method="GET" class="form-horizontal" action="/approve-request-${request.id}">
+                    <form:form method="GET" class="form-horizontal" action="/edit-request-${request.id}">
                         <div id="${request.id}" class="modal" style="max-height: 100%">
                             <div class="modal-content">
-                                <div class="row">
+                                <div class="col s12">
                                     <h4>${request.user.ssoId}</h4>
                                     <%@include file="widgets/calendar.jsp" %>
-                                    <input value="Подтвердить" type="submit" class="modal-action modal-close waves-effect waves-teal btn-flat right">
+
                                 </div>
+                                <input value="Подтвердить" type="submit" class="modal-action modal-close waves-effect waves-teal btn-flat right">
                             </div>
                         </div>
                     </form:form>

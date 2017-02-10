@@ -1,19 +1,24 @@
 package com.courses.controller;
 
+import com.courses.interceptor.ActivityType;
+import com.courses.interceptor.LoggerInterceptor;
+import com.courses.interceptor.annotation.Loggable;
 import com.courses.model.AppUser;
 import com.courses.model.Car;
+import com.courses.model.LogActivity;
 import com.courses.model.RentRequest;
 import com.courses.model.UserRole;
 import com.courses.service.CarService;
+import com.courses.service.LogActivityService;
 import com.courses.service.RentRequestService;
 import com.courses.service.UserProfileService;
 import com.courses.service.UserService;
+import com.courses.util.SessionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.security.authentication.AuthenticationTrustResolver;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenBasedRememberMeServices;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -34,6 +39,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/")
@@ -44,56 +50,65 @@ public class AppController {
     private UserService userService;
 
     @Autowired
-    CarService carService;
+    private CarService carService;
 
     @Autowired
-    UserProfileService userProfileService;
+    private UserProfileService userProfileService;
 
     @Autowired
-    RentRequestService requestService;
+    private RentRequestService requestService;
 
     @Autowired
-    MessageSource messageSource;
+    private LogActivityService activityService;
 
     @Autowired
-    PersistentTokenBasedRememberMeServices persistentTokenBasedRememberMeServices;
+    LoggerInterceptor interceptor;
 
     @Autowired
-    AuthenticationTrustResolver authenticationTrustResolver;
+    private MessageSource messageSource;
 
-    List<AppUser> users = new ArrayList<>();
+    @Autowired
+    private PersistentTokenBasedRememberMeServices persistentTokenBasedRememberMeServices;
+
+    @Autowired
+    private AuthenticationTrustResolver authenticationTrustResolver;
+
+    private List<AppUser> users = new ArrayList<>();
 
     /**
      * This method will list all existing users.
      */
+    @Loggable(activity = ActivityType.LOGIN)
     @RequestMapping(value = {"/", "/list"}, method = RequestMethod.GET)
-    public String listUsers(ModelMap model) {
+    public String listUsers(ModelMap model, HttpServletRequest request) {
 
         List<AppUser> users = userService.findAllUsers();
         this.users = users;
+
         model.addAttribute("users", users);
-        model.addAttribute("loggedinuser", getPrincipal());
+        model.addAttribute("loggedinuser", SessionUtils.getPrincipal());
         model.addAttribute("selecteduser", users.get(0));
-        model.addAttribute("userRequests", users.get(0).getUserRentRequests());
+        model.addAttribute("userActivities", users.get(0).getUserActivities());
         return "pages/usersPage";
     }
 
     @RequestMapping(value = "cars", method = RequestMethod.GET)
     public String listCars(ModelMap model) {
         List<Car> cars = carService.findAllCars();
-        model.addAttribute("loggedinuser", getPrincipal());
+        model.addAttribute("loggedinuser", SessionUtils.getPrincipal());
         model.addAttribute("cars", cars);
 
         return "pages/carsPage";
     }
 
+    @Loggable(activity = ActivityType.CAR_RENT_REQUEST)
     @RequestMapping(value = {"/edit-car-{carId}"}, method = RequestMethod.GET)
     public String editCar(@PathVariable String carId, ModelMap model) {
 
         Car carForRent = carService.findById(Integer.valueOf(carId));
         RentRequest rentRequest = new RentRequest();
         rentRequest.setCar(carForRent);
-        AppUser appUser = userService.findBySSO(getPrincipal());
+        AppUser appUser = userService.findBySSO(SessionUtils.getPrincipal());
         rentRequest.setUser(appUser);
         rentRequest.setFromDate(new Date());
         Date untilDate = new Date();
@@ -106,12 +121,14 @@ public class AppController {
         return "pages/rentRequestsPage";
     }
 
-    @RequestMapping(value = {"/approve-request-{requestId}"}, method = RequestMethod.GET)
-    public String approveRequest(@PathVariable String requestId, ModelMap modelMap){
-        RentRequest rentRequest = requestService.findRequestById(requestId);
+    @Loggable(activity = ActivityType.RENT_REQUEST_APPROVE)
+    @RequestMapping(value = {"/edit-request-{id}"}, method = RequestMethod.GET)
+    public String editRequest(@PathVariable String id, ModelMap model){
+        System.out.println("!!!!!!!!!REQUEST-ID" + id);
+        RentRequest rentRequest = requestService.findRequestById(id);
         rentRequest.setConfirmed(true);
         requestService.updateRequest(rentRequest);
-        modelMap.addAttribute("requests",requestService.getAllRequests());
+        model.addAttribute("requests",requestService.getAllRequests());
         return "pages/rentRequestPage";
     }
 
@@ -134,8 +151,16 @@ public class AppController {
 
         carService.updateCar(car);
         model.addAttribute("requests", requests);
-        model.addAttribute("loggedinuser", getPrincipal());
+        model.addAttribute("loggedinuser", SessionUtils.getPrincipal());
         return "pages/rentRequestsPage";
+    }
+
+    @RequestMapping(value = "activities", method = RequestMethod.GET)
+    public String getActivities(ModelMap model) {
+        List<LogActivity> activities = activityService.list();
+        model.addAttribute("activities",activities);
+
+        return "pages/activitiesPage";
     }
 
     /**
@@ -146,7 +171,7 @@ public class AppController {
         AppUser user = new AppUser();
         model.addAttribute("user", user);
         model.addAttribute("edit", false);
-        model.addAttribute("loggedinuser", getPrincipal());
+        model.addAttribute("loggedinuser", SessionUtils.getPrincipal());
         model.addAttribute("roles");
         return "pages/registration";
     }
@@ -158,7 +183,7 @@ public class AppController {
         }
 
       /*
-       * Preferred way to achieve uniqueness of field [sso] should be implementing custom @Unique annotation and applying it on field [sso] of Model class [User].
+       * Preferred way to achieve uniqueness of field [sso] should be implementing custom @Unique interceptor and applying it on field [sso] of Model class [User].
        *
        * Below mentioned peace of code [if block] is to demonstrate that you can fill custom errors outside the validation framework as well while still using internationalized messages.
        *
@@ -172,7 +197,7 @@ public class AppController {
         userService.saveUser(user);
 
         model.addAttribute("success", "user " + user.getFirstName() + " " + user.getLastName() + " registered successfully");
-        model.addAttribute("loggedinuser", getPrincipal());
+        model.addAttribute("loggedinuser", SessionUtils.getPrincipal());
 
         return "pages/registrationsuccess";
     }
@@ -188,11 +213,12 @@ public class AppController {
     @RequestMapping(value = {"/user-details-{ssoId}"}, method = RequestMethod.GET)
     public String getUserDetails(@PathVariable String ssoId, ModelMap model) {
         AppUser user = userService.findBySSO(ssoId);
-        List<RentRequest> userRequests = requestService.getUserRequests(user);
-        model.addAttribute("userRequests", userRequests);
+        List<LogActivity> latestActivities = user.getUserActivities().stream().limit(15).collect(Collectors.toList());
+        latestActivities.sort((o1, o2) -> o1.getTime().getTime() > o2.getTime().getTime() ? -1 : 1);
+        model.addAttribute("userActivities", latestActivities);
         model.addAttribute("users", users);
         model.addAttribute("selecteduser", user);
-        model.addAttribute("loggedinuser", getPrincipal());
+        model.addAttribute("loggedinuser", SessionUtils.getPrincipal());
 
         return "pages/usersPage";
     }
@@ -205,7 +231,7 @@ public class AppController {
         AppUser user = userService.findBySSO(ssoId);
         model.addAttribute("user", user);
         model.addAttribute("edit", true);
-        model.addAttribute("loggedinuser", getPrincipal());
+        model.addAttribute("loggedinuser", SessionUtils.getPrincipal());
         return "pages/registrationPage";
     }
 
@@ -222,7 +248,7 @@ public class AppController {
         userService.updateUser(user);
 
         model.addAttribute("success", "User " + user.getFirstName() + " " + user.getLastName() + " updated successfully");
-        model.addAttribute("loggedinuser", getPrincipal());
+        model.addAttribute("loggedinuser", SessionUtils.getPrincipal());
         return "pages/registrationsuccess";
     }
 
@@ -248,7 +274,7 @@ public class AppController {
      */
     @RequestMapping(value = "/Access_Denied", method = RequestMethod.GET)
     public String accessDeniedPage(ModelMap model) {
-        model.addAttribute("loggedinuser", getPrincipal());
+        model.addAttribute("loggedinuser", SessionUtils.getPrincipal());
         return "pages/accessDenied";
     }
 
@@ -266,7 +292,7 @@ public class AppController {
 
     @RequestMapping(value = "/registration", method = RequestMethod.POST)
     public String registerUser(@Valid AppUser user, BindingResult result, ModelMap model) {
-        return saveOrUpdateUser(user, result, model);///////////
+        return saveOrUpdateUser(user, result, model);
     }
 
     @RequestMapping(value = "/registration", method = RequestMethod.GET)
@@ -275,7 +301,7 @@ public class AppController {
         AppUser user = new AppUser();
         model.addAttribute("user", user);
         model.addAttribute("edit", false);
-        model.addAttribute("loggedinuser", getPrincipal());
+        model.addAttribute("loggedinuser", SessionUtils.getPrincipal());
         model.addAttribute("roles");
 
         return "pages/registrationPage";
@@ -284,6 +310,7 @@ public class AppController {
     /**
      * This method handles logout requests. Toggle the handlers if you are RememberMe functionality is useless in your app.
      */
+    @Loggable(activity = ActivityType.LOGOUT)
     @RequestMapping(value = "/logout", method = RequestMethod.GET)
     public String logoutPage(HttpServletRequest request, HttpServletResponse response) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -292,21 +319,6 @@ public class AppController {
             SecurityContextHolder.getContext().setAuthentication(null);
         }
         return "redirect:/login?logout";
-    }
-
-    /**
-     * This method returns the principal[user-name] of logged-in user.
-     */
-    private String getPrincipal() {
-        String userName;
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        if (principal instanceof UserDetails) {
-            userName = ((UserDetails) principal).getUsername();
-        } else {
-            userName = principal.toString();
-        }
-        return userName;
     }
 
     /**

@@ -94,24 +94,21 @@
         </div>
         <div class="col s4">
             <div class="col s12">
-                <h4 class="blue-grey-text center-align bolder">Заявки</h4>
+                <h4 class="blue-grey-text center-align bolder">Последняя активность - ${selecteduser.ssoId}</h4>
             </div>
             <div class="col s12">
-                <blockquote>
-                    This is an example quotation that uses the blockquote tag.
-                </blockquote>
                 <table class="table highlight">
                     <thead>
                     <tr>
-                        <th>Номер Заявки</th>
-                        <th>Описание</th>
+                        <th class="align-center">Время</th>
+                        <th class="align-center">Действие</th>
                     </tr>
                     </thead>
                     <tbody>
-                    <c:forEach items="${userRequests}" var="request">
+                    <c:forEach items="${userActivities}" var="activity">
                         <tr>
-                            <td>${request.id}</td>
-                            <td>${request.description}</td>
+                            <td class="align-center">${activity.formattedTime}</td>
+                            <td class="align-center">${activity.activity}</td>
                         </tr>
                     </c:forEach>
                     </tbody>

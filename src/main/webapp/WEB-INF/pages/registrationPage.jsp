@@ -13,7 +13,10 @@
 <body>
 
 <div class="row" style="margin-bottom: 0 !important;">
-    <%@include file="widgets/authheader.jsp" %>
+
+    <c:if test="${edit}">
+        <%@include file="widgets/authheader.jsp" %>
+    </c:if>
     <div class="col s9">
         <img src="static/images/RegistrationBackground.jpg" width="100%" height="100%">
     </div>
@@ -21,7 +24,14 @@
 
         <div class="container">
             <div class="section" style="margin-bottom: -40px; margin-top: 30%">
-                <h4 class="teal-text center-align" style="font-weight: bolder">Регистарция</h4>
+                <c:choose>
+                    <c:when test="${edit}">
+                        <h4 class="teal-text center-align" style="font-weight: bolder">Регистарция</h4>
+                    </c:when>
+                    <c:otherwise>
+                        <h4 class="teal-text center-align" style="font-weight: bolder">Редактировать</h4>
+                    </c:otherwise>
+                </c:choose>
             </div>
             <div class="section">
                 <h6 class="grey-text center-align">Введите свои данные</h6>
@@ -79,34 +89,32 @@
                     </div>
                 </div>
 
-                <%-- <sec:authorize access="hasRole('ADMIN')">--%>
                 <div class="row">
                     <div class="col s12">
                         <label class="col s3 control-lable" for="userRoles">Roles</label>
-                        <div class="col s11 select-wrapper">
-                            <form:select path="userRoles" items="${roles}" multiple="true" itemValue="id" itemLabel="type" class="initialized" cssStyle="display:block " />
+                        <div class="col s11 select-dropdown">
+                            <form:select path="userRoles" items="${roles}" multiple="false" itemValue="id"
+                                         itemLabel="type" class="initialized"/>
                         </div>
                     </div>
                 </div>
-                <%--  </sec:authorize>--%>
 
                 <div class='col s12'>
                     <c:choose>
                         <c:when test="${edit}">
-                            <input type="submit" value="Изменить" class="col s6 waves-effect waves-teal btn"/>
-                            <a class="waves-effect waves-teal btn-flat btn col s6" href="<c:url value='/list' />">Отменить</a>
+                            <input type="submit" value="Изменить" class="col s6 waves-effect waves-teal btn button-text-center"/>
                         </c:when>
                         <c:otherwise>
-                            <input type="submit" value="Регистрация" class="col s6 waves-effect waves-teal btn"/>
-                            <a class="waves-effect waves-teal btn-flat btn col s6" href="<c:url value='/list' />">Отменить</a>
+                            <input type="submit" value="Регистрация" class="col s6 waves-effect waves-teal btn button-text-center"/>
                         </c:otherwise>
                     </c:choose>
+                    <a class="waves-effect waves-teal btn-flat btn col s6" href="<c:url value='/list' />">Отменить</a>
                 </div>
             </form:form>
         </div>
     </div>
-
 </div>
+
 <%@include file="util/scripts.jsp" %>
 </body>
 </html>

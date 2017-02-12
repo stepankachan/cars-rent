@@ -21,21 +21,60 @@
                 <h4 class="blue-grey-text center-align bolder">Список пользователей</h4>
             </div>
             <div class="col s12">
-                <table class="table highlight">
+                <sec:authorize access="hasRole('ADMIN')">
+                    <div class="fixed-action-btn toolbar">
+                        <a class="waves-effect waves-light btn-floating blue-grey btn-large">
+                            <i class="material-icons">edit</i>
+                        </a>
+                        <ul>
+                            <li>
+                                <a class="waves-effect waves-light btn normal-text" href="<c:url value='/newuser'/>">
+                                    <i class="material-icons " >person_add</i>Создать
+                                </a>
+                            </li>
+                            <li>
+                                <a class="waves-effect waves-light btn normal-text"
+                                   href="<c:url value='/edit-user-${selecteduser.ssoId}' />">
+                                    <i class="material-icons ">mode_edit</i>
+                                    Изменить
+                                </a>
+                            </li>
+                            <li>
+                                <a class="waves-effect waves-light btn normal-text"
+                                   href="<c:url value='/delete-user-${selecteduser.ssoId}'/>">
+                                    <i class="material-icons" >delete</i>
+                                    Удалить
+                                </a>
+                            </li>
+                            <li>
+                                <a class="waves-effect waves-light btn normal-text"
+                                   href="<c:url value='/user-requests-${selecteduser.ssoId}'/>">
+                                <i class="material-icons ">description</i>
+                                <c:if test="${selecteduser.notConfirmedRequests.size() > 0}">
+                                    <span class="new badge user-badge"
+                                          data-badge-caption="Новых">${selecteduser.notConfirmedRequests.size()}</span>
+                                </c:if>
+                                Заявки
+                            </a></li>
+                        </ul>
+                    </div>
+
+                </sec:authorize>
+                <table class="table highlight tablesorter" id="users-table">
                     <thead>
                     <tr>
-                        <th></th>
-                        <th>Имя</th>
-                        <th>Фамилия</th>
-                        <th>Почта</th>
-                        <th>Логин</th>
-                        <th>Роль</th>
+                        <th class="no-sorting"></th>
+                        <th class="align-center">Логин</th>
+                        <th class="align-center">Имя</th>
+                        <th class="align-center">Фамилия</th>
+                        <th class="align-center">Почта</th>
+                        <th class="align-center">Роль</th>
                     </tr>
                     </thead>
                     <tbody>
                     <c:forEach items="${users}" var="user">
                         <tr>
-                            <td>
+                            <td class="align-center">
                                 <form id="infoForm">
                                     <input onchange="getUserDetails('${user.ssoId}')" type="checkbox"
                                            <c:if test="${selecteduser.ssoId.equals(user.ssoId)}">checked</c:if>
@@ -44,57 +83,25 @@
                                     <label for="${user.ssoId}"></label>
                                 </form>
                             </td>
-                            <td>${user.firstName}</td>
-                            <td>${user.lastName}</td>
-                            <td>${user.email}</td>
-                            <td>${user.ssoId}</td>
-                            <td>
-                                <c:if test="${user.admin.equals(true)}">Пользователь</c:if>
-                                <c:if test="${user.admin.equals(false)}">Администратор</c:if>
+                            <td class="align-center">${user.ssoId} </td>
+                            <td class="align-center">${user.firstName}</td>
+                            <td class="align-center">${user.lastName}</td>
+                            <td class="align-center">${user.email}</td>
+                            <td class="align-center">
+                                <c:if test="${user.admin.equals(true)}">Администратор</c:if>
+                                <c:if test="${user.admin.equals(false)}">Пользователь</c:if>
                             </td>
                         </tr>
+
                     </c:forEach>
-                    <sec:authorize access="hasRole('ADMIN')">
-                        <tr style="background-color: transparent">
-                            <td colspan="6" class="row">
-                                <div class="col s12 m6 l3">
-                                    <a class="waves-effect waves-light btn full-width blue-grey"
-                                       href="<c:url value='/newuser'/>">
-                                        <i class="material-icons left">person_add</i>
-                                        Создать
-                                    </a>
-                                </div>
-                                <div class="col s12 m6 l3">
-                                    <a class="waves-effect waves-light btn full-width blue-grey"
-                                       href="<c:url value='/edit-user-${selecteduser.ssoId}' />">
-                                        <i class="material-icons left">mode_edit</i>
-                                        Изменить
-                                    </a>
-                                </div>
-                                <div class="col s12 m6 l3">
-                                    <a class="waves-effect waves-light btn full-width blue-grey"
-                                       href="<c:url value='/delete-user-${selecteduser.ssoId}'/>">
-                                        <i class="material-icons left">delete</i>
-                                        Удалить
-                                    </a>
-                                </div>
-                                <div class="col s12 m6 l3">
-                                    <a class="waves-effect waves-light btn full-width blue-grey"
-                                       href="<c:url value='/edit-user-${selecteduser.ssoId}'/>">
-                                        <i class="material-icons left">delete</i>
-                                        Заявки
-                                    </a>
-                                </div>
-                            </td>
-                        </tr>
-                    </sec:authorize>
                     </tbody>
                 </table>
             </div>
         </div>
         <div class="col s4">
             <div class="col s12">
-                <h4 class="blue-grey-text center-align bolder">Последняя активность - ${selecteduser.ssoId}</h4>
+                <h4 class="blue-grey-text center-align bolder" style="padding-bottom: 10px">Последняя активность
+                    - ${selecteduser.ssoId}</h4>
             </div>
             <div class="col s12">
                 <table class="table highlight">

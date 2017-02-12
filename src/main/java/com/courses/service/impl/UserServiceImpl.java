@@ -3,6 +3,7 @@ package com.courses.service.impl;
 import com.courses.dao.UserDao;
 import com.courses.model.AppUser;
 import com.courses.service.UserService;
+import com.courses.util.SessionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -53,8 +54,9 @@ public class UserServiceImpl implements UserService {
             entity.setFirstName(user.getFirstName());
             entity.setLastName(user.getLastName());
             entity.setEmail(user.getEmail());
-          //  entity.setUserRoles(user.getUserRoles());
+            entity.setMoney(user.getMoney());
             entity.setUserRentRequests(user.getUserRentRequests());
+            SessionUtils.setLoggedInUser(user);
         }
     }
 

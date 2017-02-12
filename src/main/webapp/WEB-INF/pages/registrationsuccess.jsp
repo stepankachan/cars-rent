@@ -15,6 +15,13 @@
 		<div class="alert alert-success lead">
 	    	${success}
 		</div>
+
+        <c:if test="${successToast}">
+            <script>
+                Materialize.toast('I am a toast', 4000,'',function(){alert('Your toast was dismissed')});
+                console.log("success");
+            </script>
+        </c:if>
 		
 		<span class="well floatRight">
 			Go to <a href="<c:url value='/list' />">Login to application</a>

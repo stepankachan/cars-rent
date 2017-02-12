@@ -52,7 +52,7 @@ table.tablesorter thead tr .header {
 table.tablesorter tbody td {
     color: #3D3D3D;
     background-color: #FFF;
-    vertical-align: top;
+    vertical-align: middle;
 }
 
 table.tablesorter tbody tr.odd td {
@@ -73,4 +73,16 @@ table.tablesorter thead tr .headerSortDown, table.tablesorter thead tr .headerSo
 
 .no-sorting{
     background-image: none !important;
+}
+
+.dataTables_length select {
+    display: block !important;
+}
+
+.button-text-center input{
+        line-height: inherit;
+}
+
+.normal-text{
+    text-transform: none !important;
 }

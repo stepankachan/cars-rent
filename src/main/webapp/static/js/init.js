@@ -1,19 +1,21 @@
+$(document).ready(function(){
+    $('.modal').modal();
+    $('select').material_select();
+    $('.tooltipped').tooltip({delay: 50});
+    $(".no-sorting").off("click");
 
-function showLoginError(){
-    Materialize.toast('I am a toast!', 4000);
-}
+    var requestTable =  $("#requests-table");
+    requestTable.tablesorter();
+    requestTable.DataTable();
 
-// Initialize collapse button
-$(".button-collapse").sideNav();
-// Initialize collapsible (uncomment the line below if you use the dropdown variation)
-//$('.collapsible').collapsible();
+    var activitiesTable =  $("#activities-table");
+    activitiesTable.tablesorter();
+    activitiesTable.DataTable();
 
-
-function showMenu()
-{
-    document.getElementById("leftNavButton").click(); // Simulates button click
-    document.submitForm.submit(); // Submits the form without the button
-}
+    var usersTable =  $("#users-table");
+    usersTable.tablesorter();
+    usersTable.DataTable();
+});
 
 function getUserDetails(ssoId) {
     var form = document.getElementById('infoForm');
@@ -22,13 +24,6 @@ function getUserDetails(ssoId) {
     form.submit();
 }
 
-$(document).ready(function(){
-    // the "href" attribute of .modal-trigger must specify the modal ID that wants to be triggered
-    $('.modal').modal();
-});
-
-
-$(document).ready(function() {
-        $("#requests-table").tablesorter();
+function getFromDate() {
+    return document.getElementById('from-date').innerHTML;
 }
-);

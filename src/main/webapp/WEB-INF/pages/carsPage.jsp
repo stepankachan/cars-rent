@@ -39,14 +39,13 @@
                 </div>
             </div>
         </div>
-        <form:form method="GET" class="form-horizontal" action="/edit-car-${car.carId}">
+        <form:form method="GET" action="/rent-car-${car.carId}">
             <div id="${car.name}" class="modal" style="max-height: 100%">
-                <div class="modal-content">
-                    <div class="row">
-                        <h4>${car.name}</h4>
-                        <%@include file="widgets/calendar.jsp" %>
-                        <input value="Забронировать" type="submit" class="modal-action modal-close waves-effect waves-teal btn-flat right">
-                    </div>
+                <div class="modal-content row">
+                    <h4>${car.name}</h4>
+                    <%@include file="widgets/calendar.jsp" %>
+                    <input value="Забронировать" type="submit"
+                           class="modal-action modal-close waves-effect waves-teal btn-flat right">
                 </div>
             </div>
         </form:form>

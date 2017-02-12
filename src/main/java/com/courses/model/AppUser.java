@@ -20,7 +20,10 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Getter
@@ -51,6 +54,8 @@ public class AppUser implements Serializable {
     @NotEmpty
     @Column(name="EMAIL", nullable=false)
     private String email;
+
+    private BigDecimal money;
 
     @NotEmpty
     @ManyToMany(fetch = FetchType.LAZY)
@@ -83,4 +88,11 @@ public class AppUser implements Serializable {
     @Transient
     public transient boolean isAdmin;
 
+    public Set<RentRequest> getNotConfirmedRequests(){
+        return userRentRequests.stream().filter(RentRequest::isConfirmed).collect(Collectors.toSet());
+    }
+
+    public void addMoney(BigDecimal amount){
+        setMoney(money.add(amount));
+    }
 }

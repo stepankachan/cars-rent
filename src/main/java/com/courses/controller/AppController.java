@@ -28,11 +28,13 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -80,13 +82,19 @@ public class AppController {
      */
     @Loggable(activity = ActivityType.LOGIN)
     @RequestMapping(value = {"/", "/list"}, method = RequestMethod.GET)
-    public String listUsers(ModelMap model, HttpServletRequest request) {
+    public String listUsers(ModelMap model) {
 
         List<AppUser> users = userService.findAllUsers();
         this.users = users;
-
+        for(AppUser user : users){
+            if(user.getSsoId().equals(SessionUtils.getPrincipal())){
+                model.addAttribute("loggedinuser", user);
+                SessionUtils.setLoggedInUser(user);
+                break;
+            }
+        }
         model.addAttribute("users", users);
-        model.addAttribute("loggedinuser", SessionUtils.getPrincipal());
+        model.addAttribute("loggedinuser", SessionUtils.getCurrentUser());
         model.addAttribute("selecteduser", users.get(0));
         model.addAttribute("userActivities", users.get(0).getUserActivities());
         return "pages/usersPage";
@@ -95,16 +103,15 @@ public class AppController {
     @RequestMapping(value = "cars", method = RequestMethod.GET)
     public String listCars(ModelMap model) {
         List<Car> cars = carService.findAllCars();
-        model.addAttribute("loggedinuser", SessionUtils.getPrincipal());
+        model.addAttribute("loggedinuser", SessionUtils.getCurrentUser());
         model.addAttribute("cars", cars);
 
         return "pages/carsPage";
     }
 
     @Loggable(activity = ActivityType.CAR_RENT_REQUEST)
-    @RequestMapping(value = {"/edit-car-{carId}"}, method = RequestMethod.GET)
-    public String editCar(@PathVariable String carId, ModelMap model) {
-
+    @RequestMapping(value = {"/rent-car-{carId}/from/{from}/to{to}"}, method = RequestMethod.GET)
+    public String editCar(@PathVariable String carId, @PathVariable String from, @PathVariable String to, ModelMap model) {
         Car carForRent = carService.findById(Integer.valueOf(carId));
         RentRequest rentRequest = new RentRequest();
         rentRequest.setCar(carForRent);
@@ -117,6 +124,7 @@ public class AppController {
         rentRequest.setDescription(appUser.getFirstName() + " " + appUser.getLastName() + " has rent " + carForRent.getName());
         rentRequest.setConfirmed(false);
         requestService.addRequest(rentRequest);
+        model.clear();
         model.addAttribute("requests",requestService.getAllRequests());
         return "pages/rentRequestsPage";
     }
@@ -124,14 +132,12 @@ public class AppController {
     @Loggable(activity = ActivityType.RENT_REQUEST_APPROVE)
     @RequestMapping(value = {"/edit-request-{id}"}, method = RequestMethod.GET)
     public String editRequest(@PathVariable String id, ModelMap model){
-        System.out.println("!!!!!!!!!REQUEST-ID" + id);
         RentRequest rentRequest = requestService.findRequestById(id);
         rentRequest.setConfirmed(true);
         requestService.updateRequest(rentRequest);
         model.addAttribute("requests",requestService.getAllRequests());
-        return "pages/rentRequestPage";
+        return "pages/rentRequestsPage";
     }
-
 
     @RequestMapping(value = "requests", method = RequestMethod.GET)
     public String getRequests(ModelMap model) {
@@ -151,14 +157,16 @@ public class AppController {
 
         carService.updateCar(car);
         model.addAttribute("requests", requests);
-        model.addAttribute("loggedinuser", SessionUtils.getPrincipal());
+        model.addAttribute("loggedinuser", SessionUtils.getCurrentUser());
         return "pages/rentRequestsPage";
     }
 
     @RequestMapping(value = "activities", method = RequestMethod.GET)
     public String getActivities(ModelMap model) {
         List<LogActivity> activities = activityService.list();
+
         model.addAttribute("activities",activities);
+        model.addAttribute("loggedinuser", SessionUtils.getCurrentUser());
 
         return "pages/activitiesPage";
     }
@@ -171,7 +179,7 @@ public class AppController {
         AppUser user = new AppUser();
         model.addAttribute("user", user);
         model.addAttribute("edit", false);
-        model.addAttribute("loggedinuser", SessionUtils.getPrincipal());
+        model.addAttribute("loggedinuser", SessionUtils.getCurrentUser());
         model.addAttribute("roles");
         return "pages/registration";
     }
@@ -197,7 +205,7 @@ public class AppController {
         userService.saveUser(user);
 
         model.addAttribute("success", "user " + user.getFirstName() + " " + user.getLastName() + " registered successfully");
-        model.addAttribute("loggedinuser", SessionUtils.getPrincipal());
+        model.addAttribute("loggedinuser", SessionUtils.getCurrentUser());
 
         return "pages/registrationsuccess";
     }
@@ -218,7 +226,7 @@ public class AppController {
         model.addAttribute("userActivities", latestActivities);
         model.addAttribute("users", users);
         model.addAttribute("selecteduser", user);
-        model.addAttribute("loggedinuser", SessionUtils.getPrincipal());
+        model.addAttribute("loggedinuser", SessionUtils.getCurrentUser());
 
         return "pages/usersPage";
     }
@@ -231,7 +239,7 @@ public class AppController {
         AppUser user = userService.findBySSO(ssoId);
         model.addAttribute("user", user);
         model.addAttribute("edit", true);
-        model.addAttribute("loggedinuser", SessionUtils.getPrincipal());
+        model.addAttribute("loggedinuser", SessionUtils.getCurrentUser());
         return "pages/registrationPage";
     }
 
@@ -248,7 +256,8 @@ public class AppController {
         userService.updateUser(user);
 
         model.addAttribute("success", "User " + user.getFirstName() + " " + user.getLastName() + " updated successfully");
-        model.addAttribute("loggedinuser", SessionUtils.getPrincipal());
+        model.addAttribute("successToast", true);
+        model.addAttribute("loggedinuser", SessionUtils.getCurrentUser());
         return "pages/registrationsuccess";
     }
 
@@ -260,7 +269,12 @@ public class AppController {
         userService.deleteUserBySSO(ssoId);
         return "redirect:/list";
     }
-
+    @RequestMapping(value = {"/user-requests-{ssoId}"}, method = RequestMethod.GET)
+    public String userRequests(@PathVariable String ssoId, ModelMap model){
+        AppUser appUser = userService.findBySSO(ssoId);
+        model.addAttribute("requests", appUser.getUserRentRequests());
+        return "pages/rentRequestsPage";
+    }
     /**
      * This method will provide UserRole list to views
      */
@@ -274,7 +288,7 @@ public class AppController {
      */
     @RequestMapping(value = "/Access_Denied", method = RequestMethod.GET)
     public String accessDeniedPage(ModelMap model) {
-        model.addAttribute("loggedinuser", SessionUtils.getPrincipal());
+        model.addAttribute("loggedinuser", SessionUtils.getCurrentUser());
         return "pages/accessDenied";
     }
 
@@ -301,10 +315,25 @@ public class AppController {
         AppUser user = new AppUser();
         model.addAttribute("user", user);
         model.addAttribute("edit", false);
-        model.addAttribute("loggedinuser", SessionUtils.getPrincipal());
+        model.addAttribute("loggedinuser", SessionUtils.getCurrentUser());
         model.addAttribute("roles");
 
         return "pages/registrationPage";
+    }
+
+    @RequestMapping(value = "/fillBalance", method = RequestMethod.GET)
+    public String fillBalance(@RequestParam(value = "amount") BigDecimal amount, ModelMap model) {
+        AppUser user = userService.findBySSO(SessionUtils.getPrincipal());
+        user.addMoney(amount);
+        userService.updateUser(user);
+        List<AppUser> users = userService.findAllUsers();
+
+        model.addAttribute("loggedinuser", SessionUtils.getCurrentUser());
+        model.addAttribute("users", users);
+        model.addAttribute("selecteduser", users.get(0));
+        model.addAttribute("userActivities", users.get(0).getUserActivities());
+
+        return "pages/usersPage";
     }
 
     /**

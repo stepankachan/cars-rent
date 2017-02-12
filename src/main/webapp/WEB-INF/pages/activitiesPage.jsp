@@ -19,7 +19,7 @@
         </div>
 
         <div class="col s12">
-            <table class="table highlight tablesorter" id="requests-table">
+            <table class="table tablesorter" id="activities-table">
                 <thead>
                 <tr>
                     <th class="align-center">Пользователь</th>

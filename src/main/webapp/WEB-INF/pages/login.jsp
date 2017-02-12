@@ -72,8 +72,8 @@
                 </div>
                 <div class="col s12">
                     <p>
-                        <input type="checkbox" id="rememberme" name="remember-me"/>
-                        <label for="rememberme">Remember Me</label>
+                        <input type="checkbox" id="rememberme" name="remember-me" onclick="show()"/>
+                        <label for="rememberme">Запомнить</label>
                     </p>
                 </div>
                 <input type="hidden"  name="${_csrf.parameterName}"  value="${_csrf.token}"/>
@@ -84,6 +84,11 @@
         </div>
     </div>
 </div>
+<script>
+    function show() {
+        Materialize.toast('I am a toast', 4000,'',function(){alert('Your toast was dismissed')})
+    }
+</script>
 <%@include file="util/scripts.jsp" %>
 </body>
 </html>

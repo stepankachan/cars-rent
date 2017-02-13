@@ -3,8 +3,6 @@ package com.courses.model;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.NotEmpty;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -21,7 +19,6 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -55,7 +52,7 @@ public class AppUser implements Serializable {
     @Column(name="EMAIL", nullable=false)
     private String email;
 
-    private BigDecimal money;
+    private BigDecimal balance;
 
     @NotEmpty
     @ManyToMany(fetch = FetchType.LAZY)
@@ -89,10 +86,11 @@ public class AppUser implements Serializable {
     public transient boolean isAdmin;
 
     public Set<RentRequest> getNotConfirmedRequests(){
-        return userRentRequests.stream().filter(RentRequest::isConfirmed).collect(Collectors.toSet());
+        return userRentRequests.stream().filter(request -> request.getState()
+                .equals(RequestState.NOT_REVIEWED)).collect(Collectors.toSet());
     }
 
     public void addMoney(BigDecimal amount){
-        setMoney(money.add(amount));
+        setBalance(balance.add(amount));
     }
 }

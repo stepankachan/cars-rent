@@ -1,6 +1,7 @@
 $(document).ready(function(){
     $('.modal').modal();
     $('select').material_select();
+    $('.collapsible').collapsible();
     $('.tooltipped').tooltip({delay: 50});
     $(".no-sorting").off("click");
 
@@ -22,8 +23,4 @@ function getUserDetails(ssoId) {
     var url = '/user-details-' + ssoId;
     form.setAttribute('action',url);
     form.submit();
-}
-
-function getFromDate() {
-    return document.getElementById('from-date').innerHTML;
 }

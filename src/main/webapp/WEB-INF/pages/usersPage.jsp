@@ -78,8 +78,7 @@
                                 <form id="infoForm">
                                     <input onchange="getUserDetails('${user.ssoId}')" type="checkbox"
                                            <c:if test="${selecteduser.ssoId.equals(user.ssoId)}">checked</c:if>
-                                           id="${user.ssoId}" name="${user.ssoId}" value="${user.ssoId}"
-                                           class="filled-in"/>
+                                           id="${user.ssoId}" name="${user.ssoId}" value="${user.ssoId}" class="filled-in"/>
                                     <label for="${user.ssoId}"></label>
                                 </form>
                             </td>

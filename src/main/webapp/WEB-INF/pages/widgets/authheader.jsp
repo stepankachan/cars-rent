@@ -11,6 +11,7 @@
                     <i class="material-icons left">assignment</i>
                     <sec:authorize access="hasRole('ADMIN')">
                         Заявки
+                        <span class="new badge" data-badge-caption="">${unconfirmedCount}</span>
                     </sec:authorize>
                     <sec:authorize access="hasRole('USER')">
                         Мои заявки
@@ -38,22 +39,24 @@
         </ul>
         <ul class="right">
             <li>
-                <a href="#fillBalance"><i class="material-icons left">credit_card</i>$ ${loggedinuser.money}</a>
+                <a href="#fillBalance"><i class="material-icons left">credit_card</i>${loggedinuser.balance}$</a>
             </li>
         </ul>
     </div>
 </nav>
 
-<div id="fillBalance" class="modal modal-fixed-footer">
+<div id="fillBalance" class="modal">
     <div class="modal-content">
         <form action="<c:url value='/fillBalance' />">
             <h4>Пополнить баланс</h4>
             <div class="input-field col s6">
-                <input id="icon_prefix" type="text" class="validate" name="amount"/>
+                <input id="icon_prefix" type="number" class="validate" name="amount"/>
                 <label for="icon_prefix">Сумма</label>
             </div>
-            <input value="Пополнить" type="submit"
-                   class="modal-action modal-close waves-effect waves-teal btn-flat right">
+            <div class="modal-footer">
+                <input value="Пополнить" type="submit"
+                       class="modal-action modal-close waves-effect waves-teal btn-flat right">
+            </div>
         </form>
     </div>
 </div>

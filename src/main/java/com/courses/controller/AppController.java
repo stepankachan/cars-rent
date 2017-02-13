@@ -7,6 +7,7 @@ import com.courses.model.AppUser;
 import com.courses.model.Car;
 import com.courses.model.LogActivity;
 import com.courses.model.RentRequest;
+import com.courses.model.RequestState;
 import com.courses.model.UserRole;
 import com.courses.service.CarService;
 import com.courses.service.LogActivityService;
@@ -90,7 +91,6 @@ public class AppController {
             if(user.getSsoId().equals(SessionUtils.getPrincipal())){
                 model.addAttribute("loggedinuser", user);
                 SessionUtils.setLoggedInUser(user);
-                break;
             }
         }
         model.addAttribute("users", users);
@@ -110,32 +110,43 @@ public class AppController {
     }
 
     @Loggable(activity = ActivityType.CAR_RENT_REQUEST)
-    @RequestMapping(value = {"/rent-car-{carId}/from/{from}/to{to}"}, method = RequestMethod.GET)
-    public String editCar(@PathVariable String carId, @PathVariable String from, @PathVariable String to, ModelMap model) {
+    @RequestMapping(value = {"/rent-car-{carId}"}, method = RequestMethod.GET)
+    public String editCar(@PathVariable String carId, @RequestParam(value = "from-date") Date fromDate,
+                          @RequestParam(value = "to-date") Date toDate, ModelMap model) {
         Car carForRent = carService.findById(Integer.valueOf(carId));
         RentRequest rentRequest = new RentRequest();
         rentRequest.setCar(carForRent);
         AppUser appUser = userService.findBySSO(SessionUtils.getPrincipal());
         rentRequest.setUser(appUser);
-        rentRequest.setFromDate(new Date());
-        Date untilDate = new Date();
-        untilDate.setTime(untilDate.getTime() + 100000);
-        rentRequest.setToDate(untilDate);
-        rentRequest.setDescription(appUser.getFirstName() + " " + appUser.getLastName() + " has rent " + carForRent.getName());
-        rentRequest.setConfirmed(false);
+        rentRequest.setFromDate(fromDate);
+        rentRequest.setToDate(toDate);
+        rentRequest.setDescription("Заявка на этапе рассмотрения...");
         requestService.addRequest(rentRequest);
         model.clear();
         model.addAttribute("requests",requestService.getAllRequests());
         return "pages/rentRequestsPage";
     }
 
-    @Loggable(activity = ActivityType.RENT_REQUEST_APPROVE)
+    @Loggable(activity = ActivityType.RENT_REQUEST_CONFIRMATION)
     @RequestMapping(value = {"/edit-request-{id}"}, method = RequestMethod.GET)
     public String editRequest(@PathVariable String id, ModelMap model){
         RentRequest rentRequest = requestService.findRequestById(id);
-        rentRequest.setConfirmed(true);
+        rentRequest.setState(RequestState.CONFIRMED);
+        rentRequest.setDescription("Заявка подтверждена администратором " + SessionUtils.getPrincipal());
         requestService.updateRequest(rentRequest);
         model.addAttribute("requests",requestService.getAllRequests());
+        return "pages/rentRequestsPage";
+    }
+
+    @Loggable(activity = ActivityType.RENT_REQUEST_DISCARDED)
+    @RequestMapping(value = {"/discard-request-{id}"}, method = RequestMethod.GET)
+    public String discardRequest(@PathVariable String id,@RequestParam(value = "comment") String comment, ModelMap model){
+        RentRequest rentRequest = requestService.findRequestById(id);
+        rentRequest.setState(RequestState.DISCARDED);
+        rentRequest.setDescription("Отклонено администратором " + SessionUtils.getPrincipal() + ", Комментарий : " + comment);
+        requestService.updateRequest(rentRequest);
+        model.addAttribute("requests",requestService.getAllRequests());
+        model.addAttribute("unconfirmedCount", getUnconfirmedRequests());
         return "pages/rentRequestsPage";
     }
 
@@ -281,6 +292,12 @@ public class AppController {
     @ModelAttribute("roles")
     public List<UserRole> initializeProfiles() {
         return userProfileService.findAll();
+    }
+
+    @ModelAttribute("unconfirmedCount")
+    public Integer getUnconfirmedRequests(){
+        return Math.toIntExact(requestService.getAllRequests().stream()
+                .filter(request -> request.getState().equals(RequestState.NOT_REVIEWED)).count());
     }
 
     /**

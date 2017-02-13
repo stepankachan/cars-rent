@@ -32,14 +32,15 @@
             <table class="table highlight tablesorter" id="requests-table">
                 <thead>
                 <tr>
+                    <sec:authorize access="hasRole('ADMIN')">
+                        <th class="no-sorting request-status-icon"></th>
+                    </sec:authorize>
                     <th class="align-center">Пользователь</th>
                     <th class="align-center">Автомобиль</th>
                     <th class="align-center">Начало аренды</th>
                     <th class="align-center">Конец аренды</th>
-                    <th class="align-center">Подтверждено</th>
-                    <sec:authorize access="hasRole('ADMIN')">
-                        <th class="no-sorting"></th>
-                    </sec:authorize>
+                    <th class="align-center">Описание</th>
+                    <th class="align-center">Статус</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -47,48 +48,56 @@
                     <sec:authorize access="hasRole('USER')">
                         <c:if test="${loggedinuser.ssoId.equals(request.user.ssoId)}">
                             <tr>
+
                                 <td class="align-center">${request.user.ssoId}</td>
                                 <td class="align-center">${request.car.name}</td>
                                 <td class="align-center">${request.fromDate}</td>
                                 <td class="align-center">${request.toDate}</td>
+                                <td class="align-center">${request.description}</td>
                                 <td class="align-center">
-                                    <c:if test="${request.confirmed.equals(true)}">
-                                        <i class="material-icons ">done</i>
-                                    </c:if>
-                                    <c:if test="${request.confirmed.equals(false)}">
-                                        <i class="material-icons ">remove</i>
-                                    </c:if>
+                                    <c:choose>
+                                        <c:when test="${request.state == 'CONFIRMED'}">
+                                            <i class="material-icons ">done</i>
+                                        </c:when>
+                                        <c:when test="${request.state == 'DISCARDED'}">
+                                            <i class="material-icons ">not_interested</i>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <i class="material-icons ">schedule</i>
+                                        </c:otherwise>
+                                    </c:choose>
                                 </td>
-                                <sec:authorize access="hasRole('ADMIN')">
-                                    <td style="width: 2%">
-                                        <a class="waves-effect waves-teal btn-flat btn-block" style="margin-top: 5px"
-                                           href="#request-${request.id}">
-                                            <i class="large material-icons">search</i>
-                                        </a>
-                                    </td>
-                                </sec:authorize>
+
                             </tr>
                         </c:if>
                     </sec:authorize>
                     <sec:authorize access="hasRole('ADMIN')">
                         <tr>
+                            <sec:authorize access="hasRole('ADMIN')">
+                                <td style="width: 2%">
+                                    <a class="waves-effect waves-teal btn-flat btn-block" style="margin-top: 5px"
+                                       href="#request-${request.id}">
+                                        <i class="large material-icons request-status-icon">search</i>
+                                    </a>
+                                </td>
+                            </sec:authorize>
                             <td class="align-center">${request.user.ssoId}</td>
                             <td class="align-center">${request.car.name}</td>
                             <td class="align-center">${request.fromDate}</td>
                             <td class="align-center">${request.toDate}</td>
+                            <td class="align-center">${request.description}</td>
                             <td class="align-center">
-                                <c:if test="${request.confirmed.equals(true)}">
-                                    <i class="material-icons ">done</i>
-                                </c:if>
-                                <c:if test="${request.confirmed.equals(false)}">
-                                    <i class="material-icons ">remove</i>
-                                </c:if>
-                            </td>
-                            <td style="width: 2%">
-                                <a class="waves-effect waves-teal btn-flat btn-block" style="margin-top: 5px"
-                                   href="#request-${request.id}">
-                                    <i class="large material-icons">search</i>
-                                </a>
+                                <c:choose>
+                                    <c:when test="${request.state == 'CONFIRMED'}">
+                                        <i class="material-icons green-text request-status-icon">done</i>
+                                    </c:when>
+                                    <c:when test="${request.state == 'DISCARDED'}">
+                                        <i class="material-icons red-text request-status-icon">not_interested</i>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <i class="material-icons grey-text request-status-icon">schedule</i>
+                                    </c:otherwise>
+                                </c:choose>
                             </td>
                         </tr>
                     </sec:authorize>
@@ -96,16 +105,41 @@
                 </tbody>
             </table>
             <c:forEach items="${requests}" var="request">
-                <form:form method="GET" action="/edit-request-${request.id}">
+                <form name="request-form-${request.id}" class="information" method="GET" action="/discard-request-${request.id}">
                     <div id="request-${request.id}" class="modal" style="max-height: 100%">
-                        <div class="modal-content row">
-                            <h4>${request.user.ssoId}</h4>
-                            <%@include file="widgets/calendar.jsp" %>
-                            <input value="Подтвердить" type="submit"
-                                   class="modal-action modal-close waves-effect waves-teal btn-flat right">
+                        <div class="modal-content">
+                            <h4>Заявка пользователя ${request.user.ssoId}</h4>
+                            <div class="row">
+                                <div class="col s5">
+                                    <img class="materialboxed" data-caption=""
+                                         width="400px" height="370px" src="${request.car.imageURL}">
+                                </div>
+                                <div class="col s7">
+                                    <div class="input-field col s12">
+                                        <i class="material-icons prefix">account_circle</i>
+                                        <h5 style="margin-left: 40px; margin-top: 2px">
+                                                ${request.user.firstName} ${request.user.lastName}
+                                        </h5>
+                                    </div>
+                                    <div class="input-field col s12">
+                                        <input id="request-from" type="text" value="${request.fromDate}"/>
+                                        <label for="request-from">Началo аренды</label>
+                                    </div>
+                                    <div class="input-field col s12">
+                                        <input type="text" id="request-to" value="${request.toDate}"/>
+                                        <label for="request-to">Окончания аренды</label>
+                                    </div>
+                                    <div class="input-field col s12">
+                                        <textarea name="comment" id="comment" class="materialize-textarea validate" required="" aria-required="true"></textarea>
+                                        <label for="comment">Комментарий</label>
+                                    </div>
+                                </div>
+                                <input value="Отказать" type="submit" class="right button-text-center white-text waves-effect waves-teal btn-flat red">
+                                <a class="waves-effect waves-light btn right" href="<c:url value='/edit-request-${request.id}' />">Одобрить</a>
+                            </div>
                         </div>
                     </div>
-                </form:form>
+                </form>
             </c:forEach>
         </div>
 

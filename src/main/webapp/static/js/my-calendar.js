@@ -63,7 +63,7 @@ function highlightBetweenDates() {
                         selectedDate = new Date();
                     }
                     allTds = $('.ui-datepicker').find('td');
-                    allTds.removeClass('dp-highlight')
+                    allTds.removeClass('dp-highlight');
                     found = false;
                     if (currentDate < selectedDate) {
                         for (i = 0; i < allTds.length; i++) {

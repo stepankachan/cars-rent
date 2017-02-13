@@ -86,3 +86,7 @@ table.tablesorter thead tr .headerSortDown, table.tablesorter thead tr .headerSo
 .normal-text{
     text-transform: none !important;
 }
+
+.request-status-icon{
+    font-size: 2.5rem !important;
+}

@@ -6,25 +6,25 @@ $(".to-date-input").val('10/10/2015');
 var selectedDate = null;
 $(".datepicker").datepicker({
     minDate: 0,
-    numberOfMonths: [2,1],
+    numberOfMonths: [2, 1],
     defaultDate: '06/10/2015',
-    beforeShowDay: function(date) {
+    beforeShowDay: function (date) {
         dateFrom = $.datepicker.parseDate($.datepicker._defaults.dateFormat, $(".from-date-input").val());
         dateTo = $.datepicker.parseDate($.datepicker._defaults.dateFormat, $(".to-date-input").val());
 
-        if(dateFrom != null){
-            if(date.getTime() == dateFrom.getTime()){
-                return [true,"dateFrom"];
+        if (dateFrom != null) {
+            if (date.getTime() == dateFrom.getTime()) {
+                return [true, "dateFrom"];
             }
         }
-        if(dateTo != null){
-            if(date.getTime() == dateTo.getTime()){
-                return [true,"dateTo"];
+        if (dateTo != null) {
+            if (date.getTime() == dateTo.getTime()) {
+                return [true, "dateTo"];
             }
         }
         return [true, dateFrom && ((date.getTime() == dateFrom.getTime()) || (dateTo && date >= dateFrom && date <= dateTo)) ? "dp-highlight" : ""];
     },
-    onSelect: function(dateText, inst) {
+    onSelect: function (dateText, inst) {
         console.log('onSelect');
         dateFrom = $.datepicker.parseDate($.datepicker._defaults.dateFormat, $(".from-date-input").val());
         dateTo = $.datepicker.parseDate($.datepicker._defaults.dateFormat, $(".to-date-input").val());
@@ -33,19 +33,19 @@ $(".datepicker").datepicker({
             $(".from-date-input").val(dateText);
             $(".to-date-input").val("");
             $(this).datepicker();
-        } else if( selectedDate < dateFrom ) {
-            $(".to-date-input").val( $(".from-date-input").val() );
-            $(".from-date-input").val( dateText );
+        } else if (selectedDate < dateFrom) {
+            $(".to-date-input").val($(".from-date-input").val());
+            $(".from-date-input").val(dateText);
             $(this).datepicker();
         } else {
             $(".to-date-input").val(dateText);
             $(this).datepicker();
         }
-        setTimeout(function() {
+        setTimeout(function () {
             highlightBetweenDates();
         }, 0);
     },
-    refresh: function() {
+    refresh: function () {
         alert('er');
     }
 });
@@ -54,11 +54,11 @@ var currentDate = null;
 var allTds = null;
 
 function highlightBetweenDates() {
-    if(dateFrom == null || dateTo == null ){
-        $(".ui-datepicker-calendar td").mouseover(function() {
-            if(dateFrom != null && !$(this).hasClass('ui-datepicker-unselectable')){
-                currentDate = $.datepicker.parseDate($.datepicker._defaults.dateFormat, $(this).children().text() + '/' + (parseInt($(this).attr('data-month'))+1) + '/' + parseInt($(this).attr('data-year')));
-                if(currentDate != selectedDate){
+    if (dateFrom == null || dateTo == null) {
+        $(".ui-datepicker-calendar td").mouseover(function () {
+            if (dateFrom != null && !$(this).hasClass('ui-datepicker-unselectable')) {
+                currentDate = $.datepicker.parseDate($.datepicker._defaults.dateFormat, $(this).children().text() + '/' + (parseInt($(this).attr('data-month')) + 1) + '/' + parseInt($(this).attr('data-year')));
+                if (currentDate != selectedDate) {
                     if (selectedDate === null) {
                         selectedDate = new Date();
                     }
@@ -82,7 +82,7 @@ function highlightBetweenDates() {
                             if (found) {
                                 $(allTds[i]).addClass('dp-highlight');
                             }
-                            if ($(allTds[i]).hasClass('ui-datepicker-current-day') ) {
+                            if ($(allTds[i]).hasClass('ui-datepicker-current-day')) {
                                 found = true;
                             }
                             if (allTds[i] == this) {
@@ -97,10 +97,26 @@ function highlightBetweenDates() {
                 console.log('NOT');
             }
         });
-    }  else {
+    } else {
         $(".ui-datepicker-calendar td").unbind('mouseover');
         $(".ui-datepicker-calendar td").off('mouseover');
     }
+
+    $(".to-date-input").focus();
+}
+
+function getDaysRange() {
+    if (dateFrom != null && dateTo != null) {
+        var oneDay = 24 * 60 * 60 * 1000;
+        return Math.round(Math.abs((dateFrom.getTime() - dateTo.getTime()) / (oneDay)));
+    }
+    else {
+        return 1;
+    }
+}
+
+function displaySum(carId, carPrice){
+    document.getElementById('car-price-'+carId).value = getDaysRange() * carPrice;
 }
 
 highlightBetweenDates();

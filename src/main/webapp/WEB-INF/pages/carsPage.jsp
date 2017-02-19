@@ -39,13 +39,46 @@
                 </div>
             </div>
         </div>
-        <form:form method="GET" action="/rent-car-${car.carId}">
+        <form:form method="GET" action="/rent-car-${car.carId}" id="car-form-${car.carId}">
             <div id="${car.name}" class="modal" style="max-height: 100%">
                 <div class="modal-content row">
                     <h4>${car.name}</h4>
-                    <%@include file="widgets/calendar.jsp" %>
-                    <input value="Забронировать" type="submit"
-                           class="modal-action modal-close waves-effect waves-teal btn-flat right">
+                    <div class="calendar-container">
+                        <div class="col s8">
+                            <div class="datepicker ll-skin-melon"></div>
+                        </div>
+
+                        <div class="col s4" style="margin-bottom: 75px">
+                            <div class="input-field">
+                                <input type="text" name="from-date" id="from-date" class="from-date-input"/>
+                                <label for="from-date">Началo аренды</label>
+                            </div>
+                            <div class="input-field">
+                                <input type="text" name="to-date" id="to-date" class="to-date-input"
+                                       onfocus="displaySum(${car.carId}, ${car.price})"/>
+                                <label for="to-date">Окончания аренды</label>
+                            </div>
+
+                            <div class="input-field col s12">
+                                <div class="col s6">
+                                    <h6 class="grey-text" style="font-size: 1.5em">Стоимость</h6>
+                                </div>
+                                <div class="col s6">
+                                    <i class="material-icons prefix" style="margin-top: 8px">attach_money</i>
+                                    <input type="text" disabled id="car-price-${car.carId}"
+                                           class="blue-grey-text car-price">
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="col s12">
+                        <input value="Забронировать" type="submit"
+                               class="modal-action modal-close waves-effect waves-light btn">
+                    </div>
                 </div>
             </div>
         </form:form>

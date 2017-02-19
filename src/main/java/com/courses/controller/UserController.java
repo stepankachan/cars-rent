@@ -4,13 +4,9 @@ import com.courses.interceptor.ActivityType;
 import com.courses.interceptor.LoggerInterceptor;
 import com.courses.interceptor.annotation.Loggable;
 import com.courses.model.AppUser;
-import com.courses.model.Car;
 import com.courses.model.LogActivity;
-import com.courses.model.RentRequest;
 import com.courses.model.RequestState;
 import com.courses.model.UserRole;
-import com.courses.service.CarService;
-import com.courses.service.LogActivityService;
 import com.courses.service.RentRequestService;
 import com.courses.service.UserProfileService;
 import com.courses.service.UserService;
@@ -37,32 +33,22 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Controller
-@RequestMapping("/")
 @SessionAttributes("roles")
-public class AppController {
+public class UserController {
 
     @Autowired
     private UserService userService;
-
-    @Autowired
-    private CarService carService;
 
     @Autowired
     private UserProfileService userProfileService;
 
     @Autowired
     private RentRequestService requestService;
-
-    @Autowired
-    private LogActivityService activityService;
 
     @Autowired
     LoggerInterceptor interceptor;
@@ -98,88 +84,6 @@ public class AppController {
         model.addAttribute("selecteduser", users.get(0));
         model.addAttribute("userActivities", users.get(0).getUserActivities());
         return "pages/usersPage";
-    }
-
-    @RequestMapping(value = "cars", method = RequestMethod.GET)
-    public String listCars(ModelMap model) {
-        List<Car> cars = carService.findAllCars();
-        model.addAttribute("loggedinuser", SessionUtils.getCurrentUser());
-        model.addAttribute("cars", cars);
-
-        return "pages/carsPage";
-    }
-
-    @Loggable(activity = ActivityType.CAR_RENT_REQUEST)
-    @RequestMapping(value = {"/rent-car-{carId}"}, method = RequestMethod.GET)
-    public String editCar(@PathVariable String carId, @RequestParam(value = "from-date") Date fromDate,
-                          @RequestParam(value = "to-date") Date toDate, ModelMap model) {
-        Car carForRent = carService.findById(Integer.valueOf(carId));
-        RentRequest rentRequest = new RentRequest();
-        rentRequest.setCar(carForRent);
-        AppUser appUser = userService.findBySSO(SessionUtils.getPrincipal());
-        rentRequest.setUser(appUser);
-        rentRequest.setFromDate(fromDate);
-        rentRequest.setToDate(toDate);
-        rentRequest.setDescription("Заявка на этапе рассмотрения...");
-        requestService.addRequest(rentRequest);
-        model.clear();
-        model.addAttribute("requests",requestService.getAllRequests());
-        return "pages/rentRequestsPage";
-    }
-
-    @Loggable(activity = ActivityType.RENT_REQUEST_CONFIRMATION)
-    @RequestMapping(value = {"/edit-request-{id}"}, method = RequestMethod.GET)
-    public String editRequest(@PathVariable String id, ModelMap model){
-        RentRequest rentRequest = requestService.findRequestById(id);
-        rentRequest.setState(RequestState.CONFIRMED);
-        rentRequest.setDescription("Заявка подтверждена администратором " + SessionUtils.getPrincipal());
-        requestService.updateRequest(rentRequest);
-        model.addAttribute("requests",requestService.getAllRequests());
-        return "pages/rentRequestsPage";
-    }
-
-    @Loggable(activity = ActivityType.RENT_REQUEST_DISCARDED)
-    @RequestMapping(value = {"/discard-request-{id}"}, method = RequestMethod.GET)
-    public String discardRequest(@PathVariable String id,@RequestParam(value = "comment") String comment, ModelMap model){
-        RentRequest rentRequest = requestService.findRequestById(id);
-        rentRequest.setState(RequestState.DISCARDED);
-        rentRequest.setDescription("Отклонено администратором " + SessionUtils.getPrincipal() + ", Комментарий : " + comment);
-        requestService.updateRequest(rentRequest);
-        model.addAttribute("requests",requestService.getAllRequests());
-        model.addAttribute("unconfirmedCount", getUnconfirmedRequests());
-        return "pages/rentRequestsPage";
-    }
-
-    @RequestMapping(value = "requests", method = RequestMethod.GET)
-    public String getRequests(ModelMap model) {
-        List<RentRequest> requests = requestService.getAllRequests();
-        Car car = carService.findAllCars().iterator().next();
-        RentRequest request;
-        if (!requests.isEmpty()) {
-            request = requests.iterator().next();
-        } else {
-            request = new RentRequest();
-        }
-
-        Set<RentRequest> requestset = new HashSet<>();
-        requestset.add(request);
-
-        car.setRentRequests(requestset);
-
-        carService.updateCar(car);
-        model.addAttribute("requests", requests);
-        model.addAttribute("loggedinuser", SessionUtils.getCurrentUser());
-        return "pages/rentRequestsPage";
-    }
-
-    @RequestMapping(value = "activities", method = RequestMethod.GET)
-    public String getActivities(ModelMap model) {
-        List<LogActivity> activities = activityService.list();
-
-        model.addAttribute("activities",activities);
-        model.addAttribute("loggedinuser", SessionUtils.getCurrentUser());
-
-        return "pages/activitiesPage";
     }
 
     /**

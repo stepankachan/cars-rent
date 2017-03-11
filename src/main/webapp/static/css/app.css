@@ -93,3 +93,9 @@ table.tablesorter thead tr .headerSortDown, table.tablesorter thead tr .headerSo
 .car-price{
     font-size: 1.8em !important;
 }
+
+.car-passenger-icon {
+    margin-bottom: -5px !important;
+    margin-left: -12px !important;
+    margin-top: -5px
+}

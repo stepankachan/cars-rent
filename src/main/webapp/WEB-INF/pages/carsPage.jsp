@@ -31,7 +31,16 @@
                 </div>
                 <div class="card-content">
                     <h6>Цена (сутки) : ${car.price}$</h6>
-                    <h6>Количество пасажиров : ${car.passengerCount}</h6>
+                    <div class="row car-passenger-icon">
+                        <div class="col">
+                            <h6>Количество пасажиров :</h6>
+                        </div>
+                        <div class="col s6">
+                           <c:forEach begin="1" end="${car.passengerCount}">
+                               <i class="material-icons">person</i>
+                           </c:forEach>
+                        </div>
+                    </div>
                     <h6>Дата выпуска : ${car.releaseDate}</h6>
                     <h6>Трансмиссия : ${car.transmission}</h6>
                     <h6>Топливо : ${car.fuel}</h6>

@@ -85,7 +85,7 @@
                 <div class="col s12">
                     <div class="input-field">
                         <form:input path="email" id="email" type="email" class="validate"/>
-                        <label for="email">Почтовый адрес</label>
+                        <label for="email">Електронная почта</label>
                     </div>
                 </div>
 
